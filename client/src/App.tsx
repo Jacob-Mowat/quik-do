@@ -1,78 +1,30 @@
-import React, { useState, FormEvent, useReducer } from 'react';
+import React, { useState, FormEvent, useReducer, useContext } from 'react';
 import moment from 'moment';
 import Header from './components/header.component';
 import BinIcon from './components/BinIcon.component';
+import { TodoContext, TodoDispatchActions, TodoDispatchContext, TodoProvider, useTodo, useTodoDispatch } from './contexts/Todo.context';
 import { TodoType } from './types';
 
-const ACTIONS = {
-    ADD_TODO: 'add-todo',
-    TOGGLE_TODO: 'toggle-todo',
-    DELETE_TODO: 'delete-todo',
-};
-
-const TodoReducer = (todos: TodoType[], action: any) => {
-    switch (action.type) {
-        case ACTIONS.ADD_TODO:
-            // Check if the todo title is empty
-            if (action.payload.todo.title.trim() === '') {
-                alert('Please enter a name for your new todo.');
-                return todos;
-            }
-
-            // Check if the todo date is empty
-            if (action.payload.todo.date.trim() === '') {
-                alert('Please enter a date for your new todo.');
-                return todos;
-            }
-
-            // Create the new todo item
-            const newTodoItem: TodoType = {
-                id: todos.length + 1,
-                date: action.payload.todo.date,
-                title: action.payload.todo.title,
-                completed: false,
-            };
-
-            return [...todos, newTodoItem];
-        case ACTIONS.TOGGLE_TODO:
-            return todos.map((todo) => {
-                // If the todo id matches the id of the todo we want to toggle, toggle it
-                if (todo.id === action.payload.id) {
-                    return { ...todo, completed: !todo.completed };
-                }
-
-                return todo;
-            });
-        case ACTIONS.DELETE_TODO:
-            // Return all todos except the todo we want to delete
-            return todos.filter((todo) => todo.id !== action.payload.id);
-        default:
-            // If the action type is not recognised, return the todos array
-            return todos;
-    }
-}
-
 const App = () => {
-    // Use TodoReducer instead of useState
-    const [todos, dispatch] = useReducer(TodoReducer, []);
+    // Use our useTodo hook to get the todos array and the action
+    const todos = useTodo();
+    const dispatch = useTodoDispatch();
 
-    // New Todo form states
     const [newTodoName, setNewTodoName] = useState<string>('');
     const [newTodoDate, setNewTodoDate] = useState<string>(moment().format("YYYY-MM-DD"));
 
-    const submitNewTodo = (e: FormEvent) => {
-        e.preventDefault();
-
+    const submitNewTodo = () => {
         // Add the new todo to the todos array, call dispatch on our reducer
-        dispatch({ type: ACTIONS.ADD_TODO, payload: { todo: { title: newTodoName, date: newTodoDate } } });
+        dispatch({ type: TodoDispatchActions.ADD_TODO, payload: { todo: { title: newTodoName, date: newTodoDate } } });
 
-        // Reset the new todo form
+        // Reset our fields
         setNewTodoName('');
+        setNewTodoDate(moment().format("YYYY-MM-DD"));
     };
 
     const toggleTodoCompletion = (todoId: number) => {
         // Toggle the todo completion
-        dispatch({ type: ACTIONS.TOGGLE_TODO, payload: { id: todoId } });
+        dispatch({ type: TodoDispatchActions.TOGGLE_TODO, payload: { id: todoId } });
     };
 
     const deleteTodo = (todoId: number) => {
@@ -82,22 +34,27 @@ const App = () => {
         }
 
         // Delete the todo
-        dispatch({ type: ACTIONS.DELETE_TODO, payload: { id: todoId } });
-    }
+        dispatch({ type: TodoDispatchActions.DELETE_TODO, payload: { id: todoId } });
+    };
 
     return (
         <div className="overflow-x-hidden">
             <Header />
 
             <section className="p-8">
-                <form onSubmit={(e) => submitNewTodo(e)} className="flex md:flex-row flex-col items-center justify-between align-middle">
+                <form 
+                    onSubmit={(e: FormEvent) => { 
+                        e.preventDefault(); 
+                        submitNewTodo();
+                    }} 
+                    className="flex md:flex-row flex-col items-center justify-between align-middle"
+                >
                     <div className="flex w-[20%] items-center px-4">
                         <input
                             type="date"
                             id="newTodoDate"
                             name="newTodoDate"
                             defaultValue={newTodoDate}
-                            value={newTodoDate}
                             onChange={(e) => setNewTodoDate(e.target.value)}
                             className="flex w-full px-4 py-2 border rounded-md focus:outline-none focus:border-[#BFB854]"
                             placeholder="Enter the name of your new todo..."
@@ -125,7 +82,7 @@ const App = () => {
                 </form>
 
                 <div className="flex flex-col list-disc mt-8">
-                    {todos.sort((todo_a, todo_b) => moment(todo_b.date).valueOf() - moment(todo_a.date).valueOf()).map((todo) => (
+                    {todos.sort((todo_a: TodoType, todo_b: TodoType) => moment(todo_b.date).valueOf() - moment(todo_a.date).valueOf()).map((todo: TodoType) => (
                         <div 
                             className={`flex w-full my-1 py-1 px-4 items-center justify-between text-[#0C0D0A] ${
                                 todo.completed ? 'line-through text-[#BFB854]' : ''

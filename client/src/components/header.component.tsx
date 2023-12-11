@@ -20,7 +20,7 @@ const Header = () => {
             <nav className="flex items-center space-x-4">
                 {/* Filter todos */}
                 {filterOptions.map((filterOption) => (
-                    <a href="#" onClick={(e) => setSelectedFilter(filterOption)}className={`hover:text-[#BFB854] ${selectedFilter === filterOption ? "text-xl text-[#BFB854]" : "text-[#D9D3C7]"}`}>{filterOption}</a>
+                    <a key={filterOption} href="#" onClick={(e) => setSelectedFilter(filterOption)}className={`hover:text-[#BFB854] ${selectedFilter === filterOption ? "text-xl text-[#BFB854]" : "text-[#D9D3C7]"}`}>{filterOption}</a>
                 ))}
             </nav>
 
