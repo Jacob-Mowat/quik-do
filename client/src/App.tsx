@@ -1,11 +1,49 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useReducer } from 'react';
 import moment from 'moment';
 import Header from './components/header.component';
 import BinIcon from './components/BinIcon.component';
 import { TodoType } from './types';
 
+const ACTIONS = {
+    ADD_TODO: 'add-todo',
+    TOGGLE_TODO: 'toggle-todo',
+    DELETE_TODO: 'delete-todo',
+};
+
+const TodoReducer = (todos: TodoType[], action: any) => {
+    switch (action.type) {
+        case ACTIONS.ADD_TODO:
+            // Check if the todo title is empty
+            if (action.payload.todo.title.trim() === '') {
+                alert('Please enter a name for your new todo.');
+                return todos;
+            }
+
+            // Check if the todo date is empty
+            if (action.payload.todo.date.trim() === '') {
+                alert('Please enter a date for your new todo.');
+                return todos;
+            }
+
+            // Create the new todo item
+            const newTodoItem: TodoType = {
+                id: todos.length + 1,
+                date: action.payload.todo.date,
+                title: action.payload.todo.title,
+                completed: false,
+            };
+
+            return [...todos, newTodoItem];
+        default:
+            return todos;
+    }
+}
+
 const App = () => {
-    const [todos, setTodos] = useState<TodoType[]>([]);
+    // Use TodoReducer instead of useState
+    const [todos, dispatch] = useReducer(TodoReducer, []);
+
+    // New Todo form states
     const [newTodoName, setNewTodoName] = useState<string>('');
     const [newTodoDate, setNewTodoDate] = useState<string>(moment().format("YYYY-MM-DD"));
 
