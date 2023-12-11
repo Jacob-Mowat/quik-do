@@ -1,4 +1,14 @@
+import { useState } from "react";
+
+type Todo = {
+    id: string;
+    title: string;
+    description: string;
+    status: boolean;
+};
+
 const Header = () => {
+    const [todos, setTodos] = useState<Todo[]>([])
 
     return (
         <header className='h-20 flex items-center justify-between px-8 bg-[#0C0D0A]'>
