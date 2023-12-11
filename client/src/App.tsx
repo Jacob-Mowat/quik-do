@@ -9,7 +9,10 @@ const App = () => {
     const submitNewTodo = (e: FormEvent) => {
         e.preventDefault();
 
-        newTodoName.trim() === '' && alert('Please enter a name for your new todo.');
+        if (newTodoName.trim() === '') {
+            alert('Please enter a name for your new todo.');
+            return;
+        }
 
         const newTodoItem: TodoType = {
             id: todos.length + 1,
