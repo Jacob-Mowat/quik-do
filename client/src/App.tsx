@@ -39,7 +39,7 @@ const App = () => {
             <Header />
 
             <section className="p-8">
-                <form onSubmit={(e) => submitNewTodo(e)} className="flex items-center justify-between align-middle">
+                <form onSubmit={(e) => submitNewTodo(e)} className="flex md:flex-row flex-col items-center justify-between align-middle">
                     <div className="flex w-[20%] items-center px-4">
                         <input
                             type="date"
@@ -76,18 +76,18 @@ const App = () => {
                 <div className="flex flex-col list-disc mt-8">
                     {todos.map((todo) => (
                         <div 
-                            className={`flex w-full my-2 py-2 px-4 items-center justify-between text-[#0C0D0A] ${
+                            className={`flex w-full my-1 py-1 px-4 items-center justify-between text-[#0C0D0A] ${
                                 todo.completed ? 'line-through text-[#BFB854]' : ''
                             }`}
                             key={todo.id}
                         >
-                            <div className='w-[10%]'>
+                            <div className='md:w-[10%] text-xl'>
                                 {todo.date}
                             </div>
 
-                            <span className='w-[5%]'> - </span>
+                            <span className='w-[5%] text-4xl'> - </span>
 
-                            <div className="w-[80%]">
+                            <div className="md:w-[80%] sm:w-[40%] text-xl">
                                 {todo.title}
                             </div>
 
@@ -95,7 +95,7 @@ const App = () => {
                                 type="checkbox"
                                 checked={todo.completed}
                                 onChange={() => toggleTodoCompletion(todo.id)}
-                                className="w-[5%] mr-0 transform scale-150"
+                                className="md:w-[5%] sm:w-[2.5%] mr-0 transform scale-150 accent-[#BFB854] checked:border-[#BFAF9B] after:border-[#BFAF9B]"
                             />
                         </div>
                     ))}
