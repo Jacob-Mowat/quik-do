@@ -34,7 +34,20 @@ const TodoReducer = (todos: TodoType[], action: any) => {
             };
 
             return [...todos, newTodoItem];
+        case ACTIONS.TOGGLE_TODO:
+            return todos.map((todo) => {
+                // If the todo id matches the id of the todo we want to toggle, toggle it
+                if (todo.id === action.payload.id) {
+                    return { ...todo, completed: !todo.completed };
+                }
+
+                return todo;
+            });
+        case ACTIONS.DELETE_TODO:
+            // Return all todos except the todo we want to delete
+            return todos.filter((todo) => todo.id !== action.payload.id);
         default:
+            // If the action type is not recognised, return the todos array
             return todos;
     }
 }
@@ -50,32 +63,26 @@ const App = () => {
     const submitNewTodo = (e: FormEvent) => {
         e.preventDefault();
 
-        if (newTodoName.trim() === '') {
-            alert('Please enter a name for your new todo.');
-            return;
-        }
+        // Add the new todo to the todos array, call dispatch on our reducer
+        dispatch({ type: ACTIONS.ADD_TODO, payload: { todo: { title: newTodoName, date: newTodoDate } } });
 
-        const newTodoItem: TodoType = {
-            id: todos.length + 1,
-            date: newTodoDate,
-            title: newTodoName,
-            completed: false,
-        };
-
-        setTodos([...todos, newTodoItem]);
+        // Reset the new todo form
         setNewTodoName('');
     };
 
     const toggleTodoCompletion = (todoId: number) => {
-        setTodos((prevTodos) =>
-          prevTodos.map((todo) =>
-            todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-          )
-        );
+        // Toggle the todo completion
+        dispatch({ type: ACTIONS.TOGGLE_TODO, payload: { id: todoId } });
     };
 
     const deleteTodo = (todoId: number) => {
-        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== todoId));
+        // Confirm the user wants to delete the todo
+        if (!window.confirm('Are you sure you want to delete this todo?')) {
+            return;
+        }
+
+        // Delete the todo
+        dispatch({ type: ACTIONS.DELETE_TODO, payload: { id: todoId } });
     }
 
     return (
