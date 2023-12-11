@@ -1,4 +1,15 @@
+import { useState } from "react";
+
+const filterOptions = [
+    'All',
+    'Today',
+    'This Week',
+    'This Month',
+];
+
 const Header = () => {
+    const [selectedFilter, setSelectedFilter] = useState('All');
+
     return (
         <header className='h-20 flex items-center justify-between px-8 bg-[#0C0D0A]'>
             <div className='flex items-center'>
@@ -7,9 +18,10 @@ const Header = () => {
 
             {/* Menu actions */}
             <nav className="flex items-center space-x-4">
-                <a href="#" className="hover:text-[#BFB854] text-[#D9D3C7]">Today</a>
-                <a href="#" className="hover:text-[#BFB854] text-[#D9D3C7]">This Week</a>
-                <a href="#" className="hover:text-[#BFB854] text-[#D9D3C7]">This Month</a>
+                {/* Filter todos */}
+                {filterOptions.map((filterOption) => (
+                    <a href="#" onClick={(e) => setSelectedFilter(filterOption)}className={`hover:text-[#BFB854] ${selectedFilter === filterOption ? "text-xl text-[#BFB854]" : "text-[#D9D3C7]"}`}>{filterOption}</a>
+                ))}
             </nav>
 
             <nav className="flex items-center space-x-4">
