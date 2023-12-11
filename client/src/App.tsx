@@ -73,24 +73,33 @@ const App = () => {
                     </button>
                 </form>
 
-                <ul className="list-disc pl-8">
+                <div className="flex flex-col list-disc mt-8">
                     {todos.map((todo) => (
-                        <li
-                        key={todo.id}
-                        className={`flex items-center text-[#D9D3C7] ${
-                            todo.completed ? 'line-through text-gray-500' : ''
-                        }`}
+                        <div 
+                            className={`flex w-full my-2 py-2 px-4 items-center justify-between text-[#0C0D0A] ${
+                                todo.completed ? 'line-through text-[#BFB854]' : ''
+                            }`}
+                            key={todo.id}
                         >
-                        <input
-                            type="checkbox"
-                            checked={todo.completed}
-                            onChange={() => toggleTodoCompletion(todo.id)}
-                            className="mr-2"
-                        />
-                        {todo.title}
-                        </li>
+                            <div className='w-[10%]'>
+                                {todo.date}
+                            </div>
+
+                            <span className='w-[5%]'> - </span>
+
+                            <div className="w-[80%]">
+                                {todo.title}
+                            </div>
+
+                            <input
+                                type="checkbox"
+                                checked={todo.completed}
+                                onChange={() => toggleTodoCompletion(todo.id)}
+                                className="w-[5%] mr-0 transform scale-150"
+                            />
+                        </div>
                     ))}
-                    </ul>
+                </div>
             </section>
         </div>
     );
