@@ -86,7 +86,7 @@ const App = () => {
     }
 
     return (
-        <div className=''>
+        <div className="overflow-x-hidden">
             <Header />
 
             <section className="p-8">
