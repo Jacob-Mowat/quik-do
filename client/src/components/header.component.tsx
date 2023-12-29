@@ -1,3 +1,4 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import { useState } from "react";
 
 const filterOptions = [
@@ -9,6 +10,7 @@ const filterOptions = [
 
 const Header = () => {
     const [selectedFilter, setSelectedFilter] = useState('All');
+    const { isAuthenticated, logout, loginWithRedirect } = useAuth0();
 
     return (
         <header className='h-20 flex items-center justify-between px-8 bg-[#0C0D0A]'>
@@ -25,8 +27,12 @@ const Header = () => {
             </nav>
 
             <nav className="flex items-center space-x-4">
-                <a href="#" className="hover:text-[#BFB854] text-[#D9D3C7]">Login</a>
-                <a href="#" className="hover:text-[#BFB854] text-[#D9D3C7]">Register</a>
+                {isAuthenticated && (
+                <a href="#" onClick={() => logout()} className="hover:text-[#BFB854] text-[#D9D3C7]">Logout</a>
+                )}
+                {!isAuthenticated && (
+                <a href="#" onClick={() => loginWithRedirect() }className="hover:text-[#BFB854] text-[#D9D3C7]">Login</a>
+                )}
             </nav>
         </header>
     );

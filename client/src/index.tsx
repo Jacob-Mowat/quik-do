@@ -4,15 +4,24 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { TodoProvider } from './contexts/Todo.context';
+import { Auth0Provider } from '@auth0/auth0-react';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <TodoProvider>
-      <App />
-    </TodoProvider>
+    <Auth0Provider
+      domain="dev-yzi7l7y7.us.auth0.com"
+      clientId="Dvp7iFrv3CLidp717J6AZPXcqhfMzgeP"
+      authorizationParams={{
+        redirect_uri: window.location.origin
+      }}
+    >
+      <TodoProvider>
+        <App />
+      </TodoProvider>
+    </Auth0Provider>
   </React.StrictMode>
 );
 
