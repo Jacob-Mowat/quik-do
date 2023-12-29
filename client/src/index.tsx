@@ -17,6 +17,8 @@ root.render(
       authorizationParams={{
         redirect_uri: window.location.origin
       }}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
     >
       <TodoProvider>
         <App />

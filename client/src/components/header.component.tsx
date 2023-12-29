@@ -10,7 +10,11 @@ const filterOptions = [
 
 const Header = () => {
     const [selectedFilter, setSelectedFilter] = useState('All');
-    const { isAuthenticated, logout, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, logout, loginWithRedirect, isLoading } = useAuth0();
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <header className='h-20 flex items-center justify-between px-8 bg-[#0C0D0A]'>
@@ -28,7 +32,7 @@ const Header = () => {
 
             <nav className="flex items-center space-x-4">
                 {isAuthenticated && (
-                <a href="#" onClick={() => logout()} className="hover:text-[#BFB854] text-[#D9D3C7]">Logout</a>
+                <a href="#" onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })} className="hover:text-[#BFB854] text-[#D9D3C7]">Logout</a>
                 )}
                 {!isAuthenticated && (
                 <a href="#" onClick={() => loginWithRedirect() }className="hover:text-[#BFB854] text-[#D9D3C7]">Login</a>
