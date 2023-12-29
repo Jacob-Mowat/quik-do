@@ -4,6 +4,7 @@ import Header from './components/header.component';
 import BinIcon from './components/BinIcon.component';
 import { TodoContext, TodoDispatchActions, TodoDispatchContext, TodoProvider, useTodo, useTodoDispatch } from './contexts/Todo.context';
 import { TodoType } from './types';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const App = () => {
     // Use our useTodo hook to get the todos array and the action
@@ -12,6 +13,8 @@ const App = () => {
 
     const [newTodoName, setNewTodoName] = useState<string>('');
     const [newTodoDate, setNewTodoDate] = useState<string>(moment().format("YYYY-MM-DD"));
+
+    const { isAuthenticated, isLoading } = useAuth0();
 
     const submitNewTodo = () => {
         // Add the new todo to the todos array, call dispatch on our reducer
@@ -37,10 +40,26 @@ const App = () => {
         dispatch({ type: TodoDispatchActions.DELETE_TODO, payload: { id: todoId } });
     };
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div className="overflow-x-hidden">
             <Header />
 
+            {/* If the user is not authenticated, show a message */}
+            {!isAuthenticated && (
+                <div className="flex items-center justify-center h-screen -mt-[96px]">
+                    <div className="flex flex-col items-center justify-center">
+                        <h1 className="text-3xl font-bold text-[#0C0D0A]">Welcome to QuikDo!</h1>
+                        <p className="text-xl text-[#0C0D0A]">Please login to use the app.</p>
+                    </div>
+                </div>
+            )}
+
+            {/* If the user is authenticated, show the todos */}
+            {isAuthenticated && (
             <section className="p-8">
                 <form 
                     onSubmit={(e: FormEvent) => { 
@@ -112,7 +131,7 @@ const App = () => {
                         </div>
                     ))}
                 </div>
-            </section>
+            </section>)}
         </div>
     );
 }
