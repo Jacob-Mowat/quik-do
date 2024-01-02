@@ -6,6 +6,8 @@ import { TodoContext, TodoDispatchActions, TodoDispatchContext, TodoProvider, us
 import { TodoType } from './types';
 import { useAuth0 } from '@auth0/auth0-react';
 
+const filters = ['All', 'Completed', 'Active'];
+
 const App = () => {
     // Use our useTodo hook to get the todos array and the action
     const todos = useTodo();
@@ -15,6 +17,8 @@ const App = () => {
     const [newTodoDate, setNewTodoDate] = useState<string>(moment().format("YYYY-MM-DD"));
 
     const { isAuthenticated, isLoading } = useAuth0();
+
+    const [selectedFilter, setSelectedFilter] = useState<string>('All');
 
     const submitNewTodo = () => {
         // Add the new todo to the todos array, call dispatch on our reducer
@@ -40,6 +44,19 @@ const App = () => {
         dispatch({ type: TodoDispatchActions.DELETE_TODO, payload: { id: todoId } });
     };
 
+    const filterTodos = (todos: TodoType[], filter: string) => {
+        switch (filter) {
+            case 'All':
+                return todos;
+            case 'Completed':
+                return todos.filter((todo) => todo.completed);
+            case 'Active':
+                return todos.filter((todo) => !todo.completed);
+            default:
+                return todos;
+        }
+    };
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -60,7 +77,7 @@ const App = () => {
 
             {/* If the user is authenticated, show the todos */}
             {isAuthenticated && (
-            <section className="p-8">
+            <section className="p-8 items-center">
                 <form 
                     onSubmit={(e: FormEvent) => { 
                         e.preventDefault(); 
@@ -100,8 +117,23 @@ const App = () => {
                     </button>
                 </form>
 
-                <div className="flex flex-col list-disc mt-8">
-                    {todos.sort((todo_a: TodoType, todo_b: TodoType) => moment(todo_b.date).valueOf() - moment(todo_a.date).valueOf()).map((todo: TodoType) => (
+                {/* Add a row with links to select either All/Completed/Active */}
+                <div className="flex w-full items-center justify-center text-[#0C0D0A] my-4">
+                    {todos.length > 0 && filters.map((filterOption) => (
+                        <div className="flex items-center mx-4" key={filterOption}>
+                            <a 
+                                href="#" 
+                                onClick={(e) => setSelectedFilter(filterOption)} 
+                                className={`text-[${selectedFilter===filterOption?"#BFB854":"#0C0D0A"}] text-xl`}
+                            >
+                                {filterOption}
+                            </a>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex flex-col list-disc my-4">
+                    {filterTodos(todos.sort((todo_a: TodoType, todo_b: TodoType) => moment(todo_b.date).valueOf() - moment(todo_a.date).valueOf()), selectedFilter).map((todo: TodoType) => (
                         <div 
                             className={`flex w-full my-1 py-1 px-4 items-center justify-between text-[#0C0D0A] ${
                                 todo.completed ? 'line-through text-[#BFB854]' : ''
