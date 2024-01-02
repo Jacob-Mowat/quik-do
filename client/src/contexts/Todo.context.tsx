@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react';
+import { TodoFilterProvider } from './TodoFilter.context';
 import { TodoType } from '../types';
 
 export enum TodoDispatchActions {
@@ -71,13 +72,14 @@ export const useTodoDispatch = () => {
 }
 
 export const TodoProvider = ({ children }: { children?: React.ReactNode }) => {
-    // Use TodoReducer instead of useState
     const [todos, dispatch] = useReducer(TodoReducer, []);
 
     return (
         <TodoContext.Provider value={todos}>
             <TodoDispatchContext.Provider value={dispatch}>
-                {children}
+                <TodoFilterProvider>
+                    {children}
+                </TodoFilterProvider>
             </TodoDispatchContext.Provider>
         </TodoContext.Provider>
     );

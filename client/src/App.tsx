@@ -5,6 +5,7 @@ import BinIcon from './components/BinIcon.component';
 import { TodoContext, TodoDispatchActions, TodoDispatchContext, TodoProvider, useTodo, useTodoDispatch } from './contexts/Todo.context';
 import { TodoType } from './types';
 import { useAuth0 } from '@auth0/auth0-react';
+import { TodoDateFilters, useTodoFilter } from './contexts/TodoFilter.context';
 
 const filters = ['All', 'Completed', 'Active'];
 
@@ -12,6 +13,9 @@ const App = () => {
     // Use our useTodo hook to get the todos array and the action
     const todos = useTodo();
     const dispatch = useTodoDispatch();
+
+    // Use the filter hook to get the selected filter
+    const dateFilter = useTodoFilter();
 
     const [newTodoName, setNewTodoName] = useState<string>('');
     const [newTodoDate, setNewTodoDate] = useState<string>(moment().format("YYYY-MM-DD"));
@@ -45,16 +49,38 @@ const App = () => {
     };
 
     const filterTodos = (todos: TodoType[], filter: string) => {
+        let todosToReturn: TodoType[] = todos;
+        
+        // First, filter by date
+        switch (dateFilter) {
+            case TodoDateFilters.TODAY:
+                todosToReturn = todos.filter((todo) => moment(todo.date).isSame(moment(), 'day'));
+                break;
+            case TodoDateFilters.LAST_7_DAYS:
+                todosToReturn = todos.filter((todo) => moment(todo.date).isSameOrAfter(moment().subtract(7, 'days')));
+                break;
+            case TodoDateFilters.LAST_30_DAYS:
+                todosToReturn = todos.filter((todo) => moment(todo.date).isSameOrAfter(moment().subtract(30, 'days')));
+                break;
+            default: // TodoDateFilters.ALL
+                break;
+        }
+
+        // Then, filter by All/Completed/Active
         switch (filter) {
             case 'All':
-                return todos;
+                break;
             case 'Completed':
-                return todos.filter((todo) => todo.completed);
+                todosToReturn = todosToReturn.filter((todo) => todo.completed);
+                break;
             case 'Active':
-                return todos.filter((todo) => !todo.completed);
+                todosToReturn = todosToReturn.filter((todo) => !todo.completed);
+                break;
             default:
-                return todos;
+                break;
         }
+
+        return todosToReturn;
     };
 
     if (isLoading) {

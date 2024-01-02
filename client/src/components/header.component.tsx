@@ -1,16 +1,24 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useState } from "react";
-
-const filterOptions = [
-    'All',
-    'Today',
-    'This Week',
-    'This Month',
-];
+import { useEffect, useState } from "react";
+import { TodoDateFilters, TodoFilterDispatchActions, useTodoFilter, useTodoFilterDispatch } from "../contexts/TodoFilter.context";
 
 const Header = () => {
-    const [selectedFilter, setSelectedFilter] = useState('All');
-    const { isAuthenticated, logout, loginWithRedirect, isLoading } = useAuth0();
+    const { isAuthenticated, logout, loginWithRedirect, isLoading, user } = useAuth0();
+    const dispatch = useTodoFilterDispatch();
+    const selectedFilter = useTodoFilter();
+    
+    const dates = [
+        TodoDateFilters.ALL,
+        TodoDateFilters.TODAY,
+        TodoDateFilters.LAST_7_DAYS,
+        TodoDateFilters.LAST_30_DAYS,
+    ];
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            console.log(user);
+        }
+    }, [isAuthenticated]);
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -25,8 +33,8 @@ const Header = () => {
             {/* Menu actions */}
             <nav className="flex items-center space-x-4">
                 {/* Filter todos */}
-                {isAuthenticated && filterOptions.map((filterOption) => (
-                    <a key={filterOption} href="#" onClick={(e) => setSelectedFilter(filterOption)}className={`hover:text-[#BFB854] ${selectedFilter === filterOption ? "text-xl text-[#BFB854]" : "text-[#D9D3C7]"}`}>{filterOption}</a>
+                {isAuthenticated && dates.map((filterOption) => (
+                    <a key={filterOption} href="#" onClick={(e) => dispatch({ type: TodoFilterDispatchActions.SET_FILTER, payload: { filter: filterOption}})} className={`hover:text-[#BFB854] ${selectedFilter === filterOption ? "text-xl text-[#BFB854]" : "text-[#D9D3C7]"}`}>{filterOption}</a>
                 ))}
             </nav>
 
