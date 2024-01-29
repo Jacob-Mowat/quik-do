@@ -1,8 +1,8 @@
-import React, { useState, FormEvent, useReducer, useContext } from 'react';
 import moment from 'moment';
 import Header from './components/header.component';
+import { useState, FormEvent } from 'react';
 import BinIcon from './components/BinIcon.component';
-import { TodoContext, TodoDispatchActions, TodoDispatchContext, TodoProvider, useTodo, useTodoDispatch } from './contexts/Todo.context';
+import { TodoDispatchActions, useTodo, useTodoDispatch } from './contexts/Todo.context';
 import { TodoType } from './types';
 import { useAuth0 } from '@auth0/auth0-react';
 import { TodoDateFilters, useTodoFilter } from './contexts/TodoFilter.context';
@@ -148,13 +148,12 @@ const App = () => {
                 <div className="flex w-full items-center justify-center text-[#0C0D0A] my-4">
                     {todos.length > 0 && filters.map((filterOption) => (
                         <div className="flex items-center mx-4" key={filterOption}>
-                            <a
-                                href="#"
-                                onClick={(e) => setSelectedFilter(filterOption)}
+                            <button
+                                onClick={(e: any) => { e.preventDefault(); setSelectedFilter(filterOption); }}
                                 className={`text-[${selectedFilter===filterOption?"#BFB854":"#0C0D0A"}] text-xl`}
                             >
                                 {filterOption}
-                            </a>
+                            </button>
                         </div>
                     ))}
                 </div>
