@@ -50,7 +50,7 @@ const App = () => {
 
     const filterTodos = (todos: TodoType[], filter: string) => {
         let todosToReturn: TodoType[] = todos;
-        
+
         // First, filter by date
         switch (dateFilter) {
             case TodoDateFilters.TODAY:
@@ -104,11 +104,11 @@ const App = () => {
             {/* If the user is authenticated, show the todos */}
             {isAuthenticated && (
             <section className="p-8 items-center">
-                <form 
-                    onSubmit={(e: FormEvent) => { 
-                        e.preventDefault(); 
+                <form
+                    onSubmit={(e: FormEvent) => {
+                        e.preventDefault();
                         submitNewTodo();
-                    }} 
+                    }}
                     className="flex md:flex-row flex-col items-center justify-between align-middle"
                 >
                     <div className="flex w-[20%] items-center px-4">
@@ -122,13 +122,14 @@ const App = () => {
                             placeholder="Enter the name of your new todo..."
                         />
                     </div>
-                    
+
                     <div className="flex w-full items-center px-4">
                         <input
                             type="text"
                             id="newTodoName"
                             name="newTodoName"
                             value={newTodoName}
+                            autoComplete="off"
                             onChange={(e) => setNewTodoName(e.target.value)}
                             className="flex w-full px-4 py-2 border rounded-md focus:outline-none focus:border-[#BFB854]"
                             placeholder="Enter the name of your new todo..."
@@ -147,9 +148,9 @@ const App = () => {
                 <div className="flex w-full items-center justify-center text-[#0C0D0A] my-4">
                     {todos.length > 0 && filters.map((filterOption) => (
                         <div className="flex items-center mx-4" key={filterOption}>
-                            <a 
-                                href="#" 
-                                onClick={(e) => setSelectedFilter(filterOption)} 
+                            <a
+                                href="#"
+                                onClick={(e) => setSelectedFilter(filterOption)}
                                 className={`text-[${selectedFilter===filterOption?"#BFB854":"#0C0D0A"}] text-xl`}
                             >
                                 {filterOption}
@@ -160,17 +161,17 @@ const App = () => {
 
                 <div className="flex flex-col list-disc my-4">
                     {filterTodos(todos.sort((todo_a: TodoType, todo_b: TodoType) => moment(todo_b.date).valueOf() - moment(todo_a.date).valueOf()), selectedFilter).map((todo: TodoType) => (
-                        <div 
+                        <div
                             className={`flex w-full my-1 py-1 px-4 items-center justify-between text-[#0C0D0A] ${
                                 todo.completed ? 'line-through text-[#BFB854]' : ''
                             }`}
                             key={todo.id}
                         >
+                            {/* <span className='w-[5%] text-4xl text-center align-middle'> - </span> */}
                             <div className='md:w-[10%] text-xl'>
-                                {moment(todo.date).format('DD/MM/YYYY').replaceAll('/', ' / ')}
+                            {moment(todo.date).format('DD/MM/YYYY').replaceAll('/', ' / ')}
                             </div>
 
-                            {/* <span className='w-[5%] text-4xl text-center align-middle'> - </span> */}
 
                             <div className="md:w-[80%] sm:w-[40%] text-xl pl-8">
                                 {todo.title}
