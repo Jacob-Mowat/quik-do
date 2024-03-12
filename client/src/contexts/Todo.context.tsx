@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { TodoFilterProvider } from './TodoFilter.context';
 import { TodoType } from '../types';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export enum TodoDispatchActions {
     ADD_TODO = 'add-todo',
@@ -25,8 +26,6 @@ const TodoReducer = (todos: TodoType[], action: any) => {
                 return todos;
             }
 
-            console.log(todos);
-
             // Create the new todo item
             const newTodoItem: TodoType = {
                 id: todos.length + 1,
@@ -34,8 +33,6 @@ const TodoReducer = (todos: TodoType[], action: any) => {
                 title: action.payload.todo.title,
                 completed: false,
             };
-
-            console.log(newTodoItem);
 
             return [...todos, newTodoItem];
         case TodoDispatchActions.TOGGLE_TODO:
@@ -72,7 +69,12 @@ export const useTodoDispatch = () => {
 }
 
 export const TodoProvider = ({ children }: { children?: React.ReactNode }) => {
-    const [todos, dispatch] = useReducer(TodoReducer, []);
+    const [cachedTodos, setCachedTodos] = useLocalStorage("todos-quickdo", []);
+    const [todos, dispatch] = useReducer(TodoReducer, cachedTodos || []);
+
+    useEffect(() => {
+        setCachedTodos(todos);
+    }, [todos])
 
     return (
         <TodoContext.Provider value={todos}>
