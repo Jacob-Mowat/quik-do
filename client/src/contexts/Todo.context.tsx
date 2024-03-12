@@ -67,13 +67,11 @@ export const useTodo = () => {
 export const useTodoDispatch = () => {
     return useContext(TodoDispatchContext);
 }
-
 export const TodoProvider = ({ children }: { children?: React.ReactNode }) => {
-    const [cachedTodos, setCachedTodos] = useLocalStorage("todos-quickdo", []);
-    const [todos, dispatch] = useReducer(TodoReducer, cachedTodos || []);
+    const [todos, dispatch] = useReducer(TodoReducer, JSON.parse(localStorage.getItem("todos-quickdo") || '[]'));
 
     useEffect(() => {
-        setCachedTodos(todos);
+        localStorage.setItem("todos-quickdo", JSON.stringify(todos));
     }, [todos])
 
     return (
